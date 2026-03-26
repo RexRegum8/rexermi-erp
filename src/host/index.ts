@@ -11,6 +11,7 @@ import { DatabaseService } from '../data/database';
 import { AuthService } from '../auth/auth-service';
 import { MemoryCacheService } from '../cache/memory-cache';
 import { BootstrapService } from '../bootstrapper/bootstrap-service';
+import crypto from 'crypto';
 import { GitHubUpdateService } from '../updater/github-update-service';
 import { CloudflareTunnelService } from '../tunnel/cloudflare-tunnel-service';
 import { WebServerPlugin } from '../webserver/web-server-plugin';
@@ -70,10 +71,11 @@ class RexermiApp {
             );
 
             const installStatus = await bootstrapper.detectInstallation();
+            let adminPassword: string | null = null;
 
             switch (installStatus) {
                 case InstallationStatus.FRESH_INSTALL:
-                    await bootstrapper.runFirstTimeSetup();
+                    adminPassword = await bootstrapper.runFirstTimeSetup();
                     // Auto-select max performance for first run
                     await bootstrapper.executeChoice(
                         (await bootstrapper.showStartupMenu())
@@ -88,7 +90,8 @@ class RexermiApp {
                 case InstallationStatus.CORRUPTED:
                     this.logger.error('Database is corrupted! Running fresh setup...');
                     db.initializeSchema();
-                    const hash = await authService.hashPassword('admin123');
+                    adminPassword = this.config.auth.adminPassword || crypto.randomBytes(8).toString('hex');
+                    const hash = await authService.hashPassword(adminPassword);
                     db.seedDefaults(hash);
                     break;
             }
@@ -174,7 +177,12 @@ class RexermiApp {
             if (tunnel.isRunning()) {
                 console.log(`║  ☁️   ${tunnel.getPublicUrl()}     ║`);
             }
-            console.log('║  👤  admin / admin123 (¡Cambiar contraseña!)     ║');
+            if (adminPassword) {
+                const passDisplay = this.config.auth.adminPassword ? '[CONFIGURADA EN ENTORNO]' : adminPassword;
+                console.log(`║  👤  admin / ${passDisplay.padEnd(20)} (¡Cambiar!) ║`);
+            } else {
+                console.log('║  👤  admin / [EXISTENTE]                         ║');
+            }
             console.log('╚═══════════════════════════════════════════════════╝');
             console.log('');
 

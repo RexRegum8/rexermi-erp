@@ -96,7 +96,7 @@ export interface TokenPayload {
 
 export interface IBootstrapper {
     detectInstallation(): Promise<InstallationStatus>;
-    runFirstTimeSetup(): Promise<void>;
+    runFirstTimeSetup(): Promise<string>;
     showStartupMenu(): Promise<StartupChoice>;
     executeChoice(choice: StartupChoice): Promise<void>;
 }

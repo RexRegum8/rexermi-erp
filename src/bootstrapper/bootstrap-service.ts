@@ -4,6 +4,7 @@
 // ============================================================
 
 import readline from 'readline';
+import crypto from 'crypto';
 import { IBootstrapper, ILogger, InstallationStatus, StartupChoice } from '../core/interfaces';
 import { AppConfig } from '../core/config';
 import { DatabaseService } from '../data/database';
@@ -55,7 +56,7 @@ export class BootstrapService implements IBootstrapper {
         }
     }
 
-    async runFirstTimeSetup(): Promise<void> {
+    async runFirstTimeSetup(): Promise<string> {
         this.logger.info('═══════════════════════════════════════════');
         this.logger.info('  🚀 REXERMI ERP v2.0 — Primera Ejecución');
         this.logger.info('═══════════════════════════════════════════');
@@ -64,8 +65,8 @@ export class BootstrapService implements IBootstrapper {
         this.db.initializeSchema();
 
         // Create admin password
-        const defaultPassword = 'admin123'; // User should change this immediately
-        const hashedPassword = await this.authService.hashPassword(defaultPassword);
+        const adminPassword = this.config.auth.adminPassword || crypto.randomBytes(8).toString('hex');
+        const hashedPassword = await this.authService.hashPassword(adminPassword);
 
         // Seed all default data
         this.db.seedDefaults(hashedPassword);
@@ -73,8 +74,14 @@ export class BootstrapService implements IBootstrapper {
         this.logger.info('');
         this.logger.info('✅ Configuración inicial completada');
         this.logger.info('👤 Usuario: admin');
-        this.logger.info('🔑 Contraseña: admin123 (¡Cámbiala inmediatamente!)');
+        if (!this.config.auth.adminPassword) {
+            this.logger.info(`🔑 Contraseña: ${adminPassword} (¡Cámbiala inmediatamente!)`);
+        } else {
+            this.logger.info('🔑 Contraseña: [CONFIGURADA EN ENTORNO]');
+        }
         this.logger.info('');
+
+        return adminPassword;
     }
 
     async showStartupMenu(): Promise<StartupChoice> {
