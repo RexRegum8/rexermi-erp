@@ -177,6 +177,7 @@ export class WebServerPlugin implements IPlugin {
                 this.notify('system:role_created', { name });
                 res.status(201).json({ id: roleId, name });
             } catch (err: any) {
+                this.logger.error('Error creando rol', err);
                 res.status(500).json({ error: 'Error creando rol' });
             }
         });
@@ -210,6 +211,7 @@ export class WebServerPlugin implements IPlugin {
                     res.json({ updateAvailable: false });
                 }
             } catch (err: any) {
+                this.logger.error('Error comprobando actualizaciones', err);
                 res.status(500).json({ error: 'Error comprobando actualizaciones' });
             }
         });
@@ -235,6 +237,7 @@ export class WebServerPlugin implements IPlugin {
 
                 res.json({ success: true, message: 'Descarga iniciada' });
             } catch (err: any) {
+                this.logger.error('Error iniciando descarga', err);
                 res.status(500).json({ error: 'Error iniciando descarga' });
             }
         });
