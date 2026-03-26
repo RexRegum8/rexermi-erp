@@ -1,0 +1,41 @@
+{
+  "name": "rexermi-erp",
+  "version": "2.0.0",
+  "description": "Rexermi ERP v2.0 — Modular ERP/Web Server System",
+  "main": "dist/host/index.js",
+  "scripts": {
+    "build": "npx tsc",
+    "start": "node dist/host/index.js",
+    "dev": "npx ts-node --project tsconfig.json src/host/index.ts",
+    "test": "npx jest --config jest.config.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.6",
+    "express": "^4.21.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "node-cache": "^5.1.2",
+    "semver": "^7.6.3",
+    "socket.io": "^4.8.3",
+    "sql.js": "^1.11.0",
+    "uuid": "^11.0.0",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.0",
+    "@types/cors": "^2.8.0",
+    "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.0",
+    "@types/jsonwebtoken": "^9.0.0",
+    "@types/node": "^22.0.0",
+    "@types/semver": "^7.7.1",
+    "@types/socket.io": "^3.0.1",
+    "@types/sql.js": "^1.4.10",
+    "@types/uuid": "^10.0.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.6.0"
+  }
+}
