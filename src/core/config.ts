@@ -25,6 +25,7 @@ export interface AppConfig {
         jwtSecret: string;
         jwtExpiresIn: string;
         bcryptRounds: number;
+        adminPassword?: string;
     };
     cache: {
         maxKeys: number;
@@ -87,6 +88,7 @@ export function loadConfig(): AppConfig {
             jwtSecret: process.env.JWT_SECRET || 'rexermi-dev-secret-change-in-production',
             jwtExpiresIn: '24h',
             bcryptRounds: 12,
+            adminPassword: process.env.ADMIN_PASSWORD,
             ...fileConfig.auth,
         },
         cache: {
